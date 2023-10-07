@@ -1,5 +1,10 @@
 import { Component } from "react";
-import getGitHubUser from "../../services/DataService";
+import axios from "axios";
+
+async function getGitHubUser(user) {
+    const URI = `https://api.github.com/users/${user}`;
+    return await axios.get(URI);
+}
 
 class Info extends Component {
 
