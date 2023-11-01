@@ -9,6 +9,7 @@ jest.mock("axios", () => ({
     },
 }));
 
+//here we check if our request logic works
 describe("Data Service fake Tests", () => {
     it("just 1st fake test", async () => {
         const res = await getGitHubUser("user");

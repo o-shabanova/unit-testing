@@ -8,41 +8,31 @@ import ReactDOMServer from 'react-dom/server';
 jest.mock('axios');
 
 describe("tests for Info Component", () => {
-    // it("Test if Info Component renders correctly", () => {
-    //   const wrapper = renderer.create(<Info/>);
-    //   expect(wrapper.toJSON()).toMatchSnapshot();
-    // });
-    //
-    // it('If h3 is present 2.0', () => {
-    //   const wrapper = renderer.create(<Info/>);
-    //   const infoInstance = wrapper.root;
-    //   const headerInstance = infoInstance.findByType('h3');
-    //
-    //   expect(headerInstance).toBeTruthy();
-    // });
-    //
-    // it('if h3 is present', () => {
-    //   const wrapper = renderer.create(<Info/>);
-    //   expect('h3').toBeDefined();
-    // });
-    //
-    // it('if h3 contain text', () => {
-    //   const wrapper = renderer.create(<Info/>);
-    //   const testInstance = wrapper.root;
-    //
-    //   expect(testInstance.findByType('h3').children).toContain('GitHub User Info');
-    // });
-    //
-    // it('fetches and displays user data on successful API call', async () => {
-    //   const wrapper = renderer.create(<Info user="testuser" />);
-    //
-    //   const listItems = wrapper.root.findAllByType('li');
-    //   expect(listItems.length).toBe(2);
-    //   expect(listItems[0].children).toContain('name: John Doe');
-    //   expect(listItems[1].children).toContain('bio: Developer');
-    // });
+    it("Test if Info Component renders correctly", () => {
+      const wrapper = renderer.create(<Info/>);
+      expect(wrapper.toJSON()).toMatchSnapshot();
+    });
 
-    // https://stackoverflow.com/questions/61627298/cannot-read-property-mockresolvedvalue-of-undefined
+    it('If h3 is present 2.0', () => {
+      const wrapper = renderer.create(<Info/>);
+      const infoInstance = wrapper.root;
+      const headerInstance = infoInstance.findByType('h3');
+
+      expect(headerInstance).toBeTruthy();
+    });
+
+    it('if h3 is present', () => {
+      const wrapper = renderer.create(<Info/>);
+      expect('h3').toBeDefined();
+    });
+
+    it('if h3 contain text', () => {
+      const wrapper = renderer.create(<Info/>);
+      const testInstance = wrapper.root;
+
+      expect(testInstance.findByType('h3').children).toContain('GitHub User Info');
+    });
+
     it('fetches and displays user data on successful API call, using testing-library/react', async () => {
         axios.get = jest.fn().mockResolvedValue({data: {name: 'John Doe', bio: 'Developer'}});
 
@@ -69,16 +59,10 @@ describe("tests for Info Component", () => {
 
         const wrapper = renderer.create(<Info user="someUser" />);
 
-        // // Manually trigger effect (componentDidMount in this case)
-        // await wrapper.getInstance().componentDidMount();
-
-        // // Re-rendering component tree after state update
-        // wrapper.update(<Info user="someUser" />);
-
-        await act(async () => {
+        await act(async () => { //act helps us trigger ComponentDidMount effect instead of await wrapper.getInstance().componentDidMount(); (?)
             await Promise.resolve(wrapper);
             await Promise.resolve(); // This will resolve all the promises (including componentDidMount's)
-            wrapper.update(<Info user="someUser" />);
+            wrapper.update(<Info user="someUser" />); //update trigger re-rendering of our component
         });
 
         const listItems = wrapper.root.findAllByType('li');
