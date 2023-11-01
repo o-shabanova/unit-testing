@@ -3,6 +3,7 @@ import Info from "../components/Info";
 import React from 'react';
 import {render, waitFor} from '@testing-library/react';
 import renderer, {act} from "react-test-renderer";
+import ReactDOMServer from 'react-dom/server';
 
 jest.mock('axios');
 
@@ -53,6 +54,16 @@ describe("tests for Info Component", () => {
         expect(getByText('bio: Developer')).toBeInTheDocument();
     });
 
+    it('fetches and displays an error on unsuccessful API call, using testing-library/react', async () => {
+        axios.get = jest.fn().mockRejectedValue({ error: "request error" });
+
+        const {getByText} = render(<Info user="someUser"/>);
+
+        await waitFor(() => getByText(`error: request error`));
+
+        expect(getByText(`error: request error`)).toBeInTheDocument();
+    });
+
     it('fetches and displays user data on successful API call, using react-test-renderer', async () => {
         axios.get = jest.fn().mockResolvedValue({data: {name: 'John Doe', bio: 'Developer'}});
 
@@ -75,6 +86,28 @@ describe("tests for Info Component", () => {
         expect(listItems[0].children.join('')).toContain('name: John Doe');
         expect(listItems[1].children.join('')).toContain('bio: Developer');
     });
+
+
+    it('displays an error message on API call failure', async () =>{
+        axios.get = jest.fn().mockRejectedValue({ error: "request error" });
+
+        const wrapper = renderer.create(<Info user="someUser" />);
+
+        await act(async () => {
+            await Promise.resolve(wrapper);
+            await Promise.resolve(); // This will resolve all the promises (including componentDidMount's)
+            wrapper.update(<Info user="someUser" />);
+        });
+
+        const listItems = wrapper.root.findAllByType('li');
+        expect(listItems.length).toBe(1);
+        listItems.forEach(item => {
+            const content = item.children.join('');
+            expect(content).toContain(`error: request error`);
+        });
+
+
+    })
 
 })
 

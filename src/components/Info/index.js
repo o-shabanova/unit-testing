@@ -2,7 +2,8 @@ import { Component } from "react";
 import axios from "axios";
 
 async function getGitHubUser(user) {
-    const URI = `https://api.github.com/users/${user}`;
+    // const URI = `https://api.github.com/users/${user}`;
+    const URI = `https://api.github.com/use/${user}`;
     return await axios.get(URI);
 }
 
