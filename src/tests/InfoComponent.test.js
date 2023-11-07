@@ -54,8 +54,13 @@ describe("tests for Info Component", () => {
         expect(getByText(`error: request error`)).toBeInTheDocument();
     });
 
-    it('fetches and displays user data on successful API call, using react-test-renderer', async () => {
-        axios.get = jest.fn().mockResolvedValue({data: {name: 'John Doe', bio: 'Developer'}});
+
+});
+
+describe("Mock testing with react-test-rendderer", ()=> {
+
+    async function setup(axiosMock) {
+        axios.get = axiosMock; //чи можна поміняти місцями, по типу як у нас було?
 
         const wrapper = renderer.create(<Info user="someUser" />);
 
@@ -65,7 +70,14 @@ describe("tests for Info Component", () => {
             wrapper.update(<Info user="someUser" />); //update trigger re-rendering of our component
         });
 
-        const listItems = wrapper.root.findAllByType('li');
+        return wrapper.root;
+    }
+
+    it('fetches and displays user data on successful API call, using react-test-renderer', async () => {
+        const axiosMock = jest.fn().mockResolvedValue({data: {name: 'John Doe', bio: 'Developer'}});
+        const root = await setup(axiosMock);
+
+        const listItems = root.findAllByType('li');
         expect(listItems.length).toBe(2);
         expect(listItems[0].children.join('')).toContain('name: John Doe');
         expect(listItems[1].children.join('')).toContain('bio: Developer');
@@ -73,17 +85,10 @@ describe("tests for Info Component", () => {
 
 
     it('displays an error message on API call failure', async () =>{
-        axios.get = jest.fn().mockRejectedValue({ error: "request error" });
+        const axiosMock = jest.fn().mockRejectedValue({ error: "request error" });
+        const root = await setup(axiosMock);
 
-        const wrapper = renderer.create(<Info user="someUser" />);
-
-        await act(async () => {
-            await Promise.resolve(wrapper);
-            await Promise.resolve(); // This will resolve all the promises (including componentDidMount's)
-            wrapper.update(<Info user="someUser" />);
-        });
-
-        const listItems = wrapper.root.findAllByType('li');
+        const listItems = root.findAllByType('li');
         expect(listItems.length).toBe(1);
         listItems.forEach(item => {
             const content = item.children.join('');
@@ -92,7 +97,6 @@ describe("tests for Info Component", () => {
 
 
     })
-
 })
 
 // TODO: Your test need to be here instead of fake tests

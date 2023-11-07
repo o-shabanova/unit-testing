@@ -1,16 +1,23 @@
 import App from '../components/App';
-import {render, screen} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import renderer from 'react-test-renderer';
 import Info from "../components/Info";
+import axios from "axios";
 
-xdescribe("tests for App Component", () => {
-    it("ensure App Component renders", () => {
-        render(<App/>)
-        // expect(screen.getByText('Hello World!')).toBeInTheDocument()
-    });
-    it("if App Component renders", () => {
-        render(<App/>);
-        expect(screen.getByText('Hello World!')).toBeInTheDocument();
+jest.mock('axios');
+
+describe("tests for App Component", () => {
+    it("ensure App Component renders", async () => {
+        // render(<App />)
+        // act(() => render(<Info user={"usr"}/>) )
+        // await waitFor(() => expect(screen.getByText('Hello World!')).toBeInTheDocument());
+        // axios.get = jest.fn().mockResolvedValue({data: {name: 'John Doe', bio: 'Developer'}});
+        render(<App />);
+
+        await waitFor(() => {
+            expect(screen.getByText('Hello World!')).toBeInTheDocument();
+        });
+
     });
 });
 
